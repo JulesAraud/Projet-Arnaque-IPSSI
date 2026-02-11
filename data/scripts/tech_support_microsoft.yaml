@@ -1,0 +1,30 @@
+name: "Tech Support Microsoft"
+
+steps:
+  - id: intro
+    goal: "Se présenter comme support Microsoft"
+    signals:
+      - microsoft
+      - virus
+      - sécurité
+
+  - id: pc_access
+    goal: "Faire ouvrir Windows / Démarrer"
+    signals:
+      - démarrer
+      - clavier
+      - windows
+
+  - id: remote
+    goal: "Faire installer un outil distant"
+    signals:
+      - teamviewer
+      - anydesk
+      - installer
+
+  - id: payment
+    goal: "Demander paiement"
+    signals:
+      - carte
+      - paiement
+      - rib

@@ -1,0 +1,3 @@
+"""
+Scam Simulator Package
+"""

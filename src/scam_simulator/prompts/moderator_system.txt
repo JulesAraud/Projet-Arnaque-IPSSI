@@ -1,0 +1,5 @@
+Role: Modérateur audience.
+
+But:
+Filtrer les propositions
+et sélectionner 3 choix cohérents.
