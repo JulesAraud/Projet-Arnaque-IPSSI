@@ -1,14 +1,21 @@
-def dog_bark():
-    return "[SOUND: DOG_BARK]"
+from langchain_core.tools import tool
 
+@tool
+def dog_bark() -> str:
+    """Joue un aboiement de chien."""
+    return "[SOUND_EFFECT: DOG_BARKING]"
 
-def doorbell():
-    return "[SOUND: DOORBELL]"
+@tool
+def doorbell() -> str:
+    """Joue une sonnette."""
+    return "[SOUND_EFFECT: DOORBELL]"
 
+@tool
+def coughing_fit() -> str:
+    """Simule une quinte de toux."""
+    return "[SOUND_EFFECT: COUGHING_FIT]"
 
-def coughing_fit():
-    return "[SOUND: COUGHING]"
-
-
-def tv_background():
-    return "[SOUND: TV_BACKGROUND]"
+@tool
+def tv_background() -> str:
+    """Bruit de télé en fond."""
+    return "[SOUND_EFFECT: TV_BACKGROUND_LOUD]"

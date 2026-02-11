@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scam-simulator"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+  "python-dotenv>=1.0.0",
+  "PyYAML>=6.0.1",
+  "rich>=13.7.0",
+  "langchain>=0.2.0",
+  "langchain-openai>=0.1.0",
+  "langchain-core>=0.2.0"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"scam_simulator.prompts" = ["*.txt"]

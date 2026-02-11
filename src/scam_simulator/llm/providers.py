@@ -1,10 +1,16 @@
+from __future__ import annotations
+
+from langchain_openai import ChatOpenAI
 from scam_simulator.config import Config
 
 
-class LLMProvider:
-
-    def __init__(self):
-        self.api_key = Config.OPENAI_API_KEY
-
-    def is_configured(self):
-        return self.api_key is not None
+def make_chat(model: str, temperature: float = 0.2) -> ChatOpenAI:
+    """
+    Fabrique un ChatOpenAI LangChain.
+    La clé est lue via OPENAI_API_KEY (.env).
+    """
+    return ChatOpenAI(
+        model=model,
+        temperature=temperature,
+        api_key=Config.OPENAI_API_KEY,
+    )

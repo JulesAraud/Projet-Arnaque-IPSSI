@@ -1,0 +1,14 @@
+# Environnement
+venv/
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+data/logs/*
+!data/logs/.gitkeep
+
+# Packaging
+*.egg-info/
