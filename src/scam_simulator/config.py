@@ -11,3 +11,9 @@ class Config:
     MODEL_VICTIM = os.getenv("MODEL_VICTIM")
     MODEL_DIRECTOR = os.getenv("MODEL_DIRECTOR")
     MODEL_MODERATOR = os.getenv("MODEL_MODERATOR")
+    
+    MCP_SOUNDBOARD_COMMAND = os.getenv("MCP_SOUNDBOARD_COMMAND", "python")
+    MCP_SOUNDBOARD_ARGS = os.getenv(
+        "MCP_SOUNDBOARD_ARGS",
+        "-m scam_simulator.tools.mcp_server"
+    ).split()
