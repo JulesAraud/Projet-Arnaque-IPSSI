@@ -8,3 +8,5 @@ langchain-core>=0.2.0
 
 mcp
 langchain-mcp-adapters
+
+streamlit

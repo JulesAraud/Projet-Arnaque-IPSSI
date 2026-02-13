@@ -24,6 +24,9 @@ Lancer :
 
 python -m scam_simulator.main
 
+streamlit run src/scam_simulator/web/app.py
+
+
 Ensuite (dans ta console pour le moment) :
 
 tape les messages de l'arnaqueur

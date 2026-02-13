@@ -28,3 +28,5 @@ src/scam_simulator/prompts/victim_system.txt
 src/scam_simulator/tools/__init__.py
 src/scam_simulator/tools/mcp_server.py
 src/scam_simulator/tools/soundboard.py
+src/scam_simulator/web/__init__.py
+src/scam_simulator/web/app.py
