@@ -57,7 +57,9 @@ class VictimAgent:
         self._tools = tools
         self._tool_by_name = {t.name: t for t in tools}
 
-        self.llm = self.llm.bind_tools(self._tools)
+        if Config.LLM_PROVIDER != "hf":
+            self.llm = self.llm.bind_tools(self._tools)
+
 
         self._tools_loaded = True
     def _run_async(self, coro):
@@ -78,12 +80,8 @@ class VictimAgent:
         return asyncio.run(coro)
 
     def respond(self, user_input: str, objective: str, constraint: Optional[str] = None) -> str:
-        try:
-            loop = asyncio.get_running_loop()
-            task = loop.create_task(self._ensure_tools())
-            loop.run_until_complete(task)
-        except RuntimeError:
-            asyncio.run(self._ensure_tools())
+        self._run_async(self._ensure_tools())
+
 
         system_text = self.system_template.format(
             dynamic_context=objective,
@@ -95,7 +93,14 @@ class VictimAgent:
         messages.append(HumanMessage(content=user_input))
 
         # Appel du modèle
-        ai_msg: AIMessage = self.llm.invoke(messages)
+        if Config.LLM_PROVIDER == "hf":
+            prompt_text = "\n".join(
+                f"{m.__class__.__name__}: {getattr(m, 'content', '')}" for m in messages
+            )
+            raw = self.llm.invoke(prompt_text)
+            ai_msg = AIMessage(content=str(raw))
+        else:
+            ai_msg: AIMessage = self.llm.invoke(messages)
         tool_calls = getattr(ai_msg, "tool_calls", None) or []
 
         if tool_calls:
@@ -109,7 +114,8 @@ class VictimAgent:
                 if tool is None:
                     output = f"[TOOL_ERROR: unknown_tool={name}]"
                 else:
-                    output = tool.invoke(args)
+                    output = self._run_async(tool.ainvoke(args))
+
 
                 tool_messages.append(
                     ToolMessage(content=str(output), tool_call_id=call.get("id", ""))
@@ -118,7 +124,15 @@ class VictimAgent:
             messages.append(ai_msg)
             messages.extend(tool_messages)
 
-            final_msg: AIMessage = self.llm.invoke(messages)
+            if Config.LLM_PROVIDER == "hf":
+                prompt_text = "\n".join(
+                    f"{m.__class__.__name__}: {getattr(m, 'content', '')}" for m in messages
+                )
+                raw = self.llm.invoke(prompt_text)
+                final_msg = AIMessage(content=str(raw))
+            else:
+                final_msg: AIMessage = self.llm.invoke(messages)
+
             self._remember(user_input, final_msg.content)
             return final_msg.content
 

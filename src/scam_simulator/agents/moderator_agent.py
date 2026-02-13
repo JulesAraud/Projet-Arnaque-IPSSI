@@ -30,7 +30,11 @@ class ModeratorAgent:
             "Format strict: 3 lignes, sans puces, sans numéros.\n"
         )
         msg = self.llm.invoke(prompt)
-        lines = [l.strip() for l in (msg.content or "").splitlines() if l.strip()]
+        text = getattr(msg, "content", None)
+        if text is None:
+            text = str(msg)
+        lines = [l.strip() for l in text.splitlines() if l.strip()]
+
         # fallback si le modèle fait n'importe quoi
         while len(lines) < 3:
             lines.append("La télé est trop forte")

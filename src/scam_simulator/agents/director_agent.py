@@ -14,7 +14,7 @@ class DirectorAgent:
     """
 
     def __init__(self) -> None:
-        self.llm = make_chat(Config.MODEL_DIRECTOR, temperature=0.2)
+        self.llm = make_chat(Config.MODEL_MODERATOR, temperature=0.2)
         self.system = load_prompt("director_system.txt")
 
     def analyze(self, user_input: str) -> str:
