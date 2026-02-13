@@ -10,3 +10,9 @@ mcp
 langchain-mcp-adapters
 
 streamlit
+
+nest_asyncio
+
+
+langchain-google-vertexai
+google-cloud-aiplatform

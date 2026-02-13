@@ -14,15 +14,16 @@ class DirectorAgent:
     """
 
     def __init__(self) -> None:
-        self.llm = make_chat(Config.MODEL_DIRECTOR or "gpt-4.1-mini", temperature=0.2)
+        self.llm = make_chat(Config.MODEL_DIRECTOR, temperature=0.2)
         self.system = load_prompt("director_system.txt")
 
     def analyze(self, user_input: str) -> str:
-        prompt = (
-            f"{self.system}\n\n"
-            "Analyse le message de l'arnaqueur et donne UN objectif court pour Jeanne.\n"
-            "Format strict: une seule phrase (pas de markdown).\n\n"
-            f"Message arnaqueur: {user_input}"
-        )
-        msg = self.llm.invoke(prompt)
-        return (msg.content or "").strip() or "Rester confuse et demander de répéter."
+        t = user_input.lower()
+
+        if any(k in t for k in ["2000", "euro", "€", "paiement", "virement", "iban", "rib", "carte", "cvc", "cvv"]):
+            return "Refuser tout paiement, demander un courrier officiel, gagner du temps."
+        if any(k in t for k in ["installer", "télécharger", "teamviewer", "anydesk", "contrôle à distance", "clic", "lien"]):
+            return "Faire semblant d’être perdue sur l’ordinateur, ne rien installer, faire répéter."
+        if any(k in t for k in ["microsoft", "support", "windows", "virus", "sécurité"]):
+            return "Demander une preuve officielle, rester confuse, poser des questions simples."
+        return "Rester polie, lente, confuse, et faire perdre du temps."

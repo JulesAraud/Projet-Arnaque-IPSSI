@@ -94,10 +94,10 @@ st.set_page_config(
 
 st.title("🎭 Simulateur d'Arnaque — Jeanne Dubois (LLM + MCP Tools)")
 
-# Check config
-if not Config.OPENAI_API_KEY:
-    st.error("OPENAI_API_KEY manquant. Ajoute-le dans le fichier .env puis relance Streamlit.")
+if Config.LLM_PROVIDER.lower() == "openai" and not Config.OPENAI_API_KEY:
+    st.error("OPENAI_API_KEY manquant. Ajoute-le dans .env puis relance.")
     st.stop()
+
 
 ensure_agents()
 if "chat" not in st.session_state:
@@ -122,6 +122,7 @@ with st.sidebar:
     st.write("Args :", " ".join(Config.MCP_SOUNDBOARD_ARGS))
 
 
+
 col1, col2, col3 = st.columns([1.2, 2.2, 1.4], gap="large")
 
 # -----------------------------
@@ -129,17 +130,18 @@ col1, col2, col3 = st.columns([1.2, 2.2, 1.4], gap="large")
 # -----------------------------
 with col1:
     st.subheader("🕵️ Arnaqueur")
-    scammer_text = st.text_area(
-        "Message de l'arnaqueur",
-        placeholder="Ex: Bonjour madame, je suis du support Microsoft...",
-        height=160,
-        key="scammer_input",
-    )
 
-    send = st.button("📨 Envoyer", type="primary", use_container_width=True)
+    with st.form("scammer_form", clear_on_submit=True):
+        scammer_text = st.text_area(
+            "Message de l'arnaqueur",
+            placeholder="Ex: Bonjour madame, je suis du support Microsoft...",
+            height=160,
+            key="scammer_input",
+        )
+        send = st.form_submit_button("📨 Envoyer", type="primary", use_container_width=True)
 
     st.divider()
-    st.caption("Astuce : tape 'quit' en CLI, ici utilise Reset.")
+    st.caption("Astuce : utilise Reset pour recommencer.")
 
 # -----------------------------
 # Column 3: Audience
@@ -269,8 +271,6 @@ if send:
     # Increment turn
     st.session_state.turn += 1
 
-    # Clear input
-    st.session_state.scammer_input = ""
 
     # Rerun to refresh UI
     st.rerun()

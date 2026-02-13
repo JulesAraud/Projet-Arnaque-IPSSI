@@ -15,6 +15,7 @@ src/scam_simulator/agents/moderator_agent.py
 src/scam_simulator/agents/victim_agent.py
 src/scam_simulator/llm/__init__.py
 src/scam_simulator/llm/memory.py
+src/scam_simulator/llm/mock_chat.py
 src/scam_simulator/llm/providers.py
 src/scam_simulator/orchestration/__init__.py
 src/scam_simulator/orchestration/audience.py

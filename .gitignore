@@ -12,3 +12,8 @@ data/logs/*
 
 # Packaging
 *.egg-info/
+
+*.json
+**/service-account*.json
+**/*credentials*.json
+

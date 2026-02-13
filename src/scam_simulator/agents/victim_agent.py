@@ -10,7 +10,7 @@ from langchain_core.messages import (
     AIMessage,
     BaseMessage,
 )
-from langchain_openai import ChatOpenAI
+from scam_simulator.llm.providers import make_chat
 
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
@@ -28,11 +28,11 @@ class VictimAgent:
     def __init__(self) -> None:
         self.system_template = load_prompt("victim_system.txt")
 
-        self.llm = ChatOpenAI(
-            model=Config.MODEL_VICTIM or "gpt-4.1-mini",
-            temperature=0.6,
-            api_key=Config.OPENAI_API_KEY,
+        self.llm = make_chat(
+            model=Config.MODEL_VICTIM,
+            temperature=0.6
         )
+
 
         self.history: List[BaseMessage] = []
         self._tools_loaded = False
@@ -61,10 +61,32 @@ class VictimAgent:
         self.llm = self.llm.bind_tools(self._tools)
 
         self._tools_loaded = True
+    def _run_async(self, coro):
+        """
+        Exécute une coroutine même si un event loop tourne déjà (cas Streamlit).
+        """
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+
+        if loop and loop.is_running():
+            # Streamlit / environnement avec loop déjà active
+            import nest_asyncio  # type: ignore
+            nest_asyncio.apply()
+            return asyncio.get_event_loop().run_until_complete(coro)
+
+        return asyncio.run(coro)
 
     def respond(self, user_input: str, objective: str, constraint: Optional[str] = None) -> str:
         # Load tools (1ère fois) — loop sync -> on encapsule async
-        asyncio.run(self._ensure_tools())
+        try:
+            loop = asyncio.get_running_loop()
+            # Si on est déjà dans une loop (rare ici), on planifie
+            task = loop.create_task(self._ensure_tools())
+            loop.run_until_complete(task)
+        except RuntimeError:
+            asyncio.run(self._ensure_tools())
 
         system_text = self.system_template.format(
             dynamic_context=objective,

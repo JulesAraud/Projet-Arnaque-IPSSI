@@ -15,7 +15,7 @@ class ModeratorAgent:
     """
 
     def __init__(self) -> None:
-        self.llm = make_chat(Config.MODEL_MODERATOR or "gpt-4.1-mini", temperature=0.3)
+        self.llm = make_chat(Config.MODEL_DIRECTOR, temperature=0.2)
         self.system = load_prompt("moderator_system.txt")
 
     def pick_three(self, proposals: List[str], context: str) -> List[str]:
