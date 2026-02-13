@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from mcp.server.fastmcp import FastMCP
 
-# Serveur MCP (transport stdio)
+# Serveur MCP
 mcp = FastMCP("arnaque-soundboard")
 
 
@@ -32,7 +32,6 @@ def tv_background() -> str:
 
 
 def main() -> None:
-    # NE PAS print sur stdout (stdio transport) -> si besoin, logguez sur stderr
     print("MCP soundboard server starting (stdio)...", file=sys.stderr)
     mcp.run(transport="stdio")
 

@@ -39,7 +39,7 @@ class VictimAgent:
         self._tools = []
         self._tool_by_name = {}
 
-        # Client MCP (stdio) : le subprocess serveur sera lancé quand on récupère/appele les tools
+        # Client MCP : le subprocess serveur sera lancé quand on récupèreles tools
         self._mcp_client = MultiServerMCPClient(
             {
                 "soundboard": {
@@ -57,7 +57,6 @@ class VictimAgent:
         self._tools = tools
         self._tool_by_name = {t.name: t for t in tools}
 
-        # On “bind” les tools au modèle (tool calling)
         self.llm = self.llm.bind_tools(self._tools)
 
         self._tools_loaded = True
@@ -72,17 +71,15 @@ class VictimAgent:
 
         if loop and loop.is_running():
             # Streamlit / environnement avec loop déjà active
-            import nest_asyncio  # type: ignore
+            import nest_asyncio 
             nest_asyncio.apply()
             return asyncio.get_event_loop().run_until_complete(coro)
 
         return asyncio.run(coro)
 
     def respond(self, user_input: str, objective: str, constraint: Optional[str] = None) -> str:
-        # Load tools (1ère fois) — loop sync -> on encapsule async
         try:
             loop = asyncio.get_running_loop()
-            # Si on est déjà dans une loop (rare ici), on planifie
             task = loop.create_task(self._ensure_tools())
             loop.run_until_complete(task)
         except RuntimeError:
@@ -97,7 +94,7 @@ class VictimAgent:
         messages.extend(self.history)
         messages.append(HumanMessage(content=user_input))
 
-        # 1) Appel du modèle (peut demander des tool calls MCP)
+        # Appel du modèle
         ai_msg: AIMessage = self.llm.invoke(messages)
         tool_calls = getattr(ai_msg, "tool_calls", None) or []
 
@@ -112,7 +109,6 @@ class VictimAgent:
                 if tool is None:
                     output = f"[TOOL_ERROR: unknown_tool={name}]"
                 else:
-                    # tool MCP converti => invoke(args) déclenche une session MCP et appelle le serveur
                     output = tool.invoke(args)
 
                 tool_messages.append(

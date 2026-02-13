@@ -6,12 +6,12 @@ from scam_simulator.config import Config
 def make_chat(model: str | None = None, temperature: float = 0.2):
     provider = (Config.LLM_PROVIDER or "openai").lower()
 
-    # 1) MOCK (gratuit)
+    # 1) MOCK 
     if provider == "mock":
         from scam_simulator.llm.mock_chat import MockChatModel
         return MockChatModel(temperature=temperature, model=model or "mock")
 
-    # 2) VERTEX (service account)
+    # 2) VERTEX
     if provider == "vertex":
         from langchain_google_vertexai import ChatVertexAI
         return ChatVertexAI(

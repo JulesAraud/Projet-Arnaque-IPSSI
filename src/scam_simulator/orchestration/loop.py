@@ -44,7 +44,7 @@ def run_simulation() -> None:
                 choices = ["Quelqu'un sonne à la porte", "Le chien aboie fort", "Quinte de toux"]
             state.audience_constraint = run_vote(choices)
 
-        # Victime -> peut tool-call
+ 
         reply = victim.respond(
             user_input=scammer,
             objective=state.current_objective,
